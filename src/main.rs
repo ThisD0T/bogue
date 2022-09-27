@@ -1,6 +1,7 @@
 use bevy::{
     prelude::*,
-    render::camera::ScalingMode
+    render::camera::ScalingMode,
+    sprite::collide_aabb::collide,
 };
 
 use rand;
@@ -12,6 +13,7 @@ use rand::{
 mod lib;
 use lib::{
     apply_physics,
+    SizeVars,
 };
 
 mod input;
@@ -21,6 +23,14 @@ use input::{
 
 mod gameobject;
 use gameobject::GameObjectPlugin;
+use gameobject::{
+    PlayerFlag,
+};
+
+mod platform;
+use platform::{
+    PlatformPlugin
+};
 
 mod debug;
 use debug::DebugPlugin;
@@ -43,9 +53,11 @@ fn main() {
     .add_plugins(DefaultPlugins)
     .add_plugin(DebugPlugin)
     .add_plugin(GameObjectPlugin)
+    .add_plugin(PlatformPlugin)
     .add_plugin(InputPlugin)
     .add_startup_system(camera_setup)
     .add_system(apply_physics)
+    .add_system(test_collision)
     .run();
 }
 
@@ -57,15 +69,21 @@ fn camera_setup(
     let camera = commands.spawn().id();
     commands.entity(camera)
         .insert_bundle(Camera2dBundle::default());
-    
-    let background = commands.spawn().id();
-    commands.entity(background)
-        .insert_bundle(SpriteBundle{
-            transform: Transform{
-                translation: Vec3::splat(0.0),
-                ..default()
-            },
-            texture: assets.load("background.png"),
-            ..default()
-        });
+}
+
+pub fn test_collision(
+    mut commands: Commands,
+    mut player_query: Query<(&mut SizeVars, &Transform), With<PlayerFlag>>,
+    mut platform_query: Query<(&mut SizeVars, &Transform), Without<PlayerFlag>>,
+) {
+    let (player_size, player_transform) = player_query.single_mut();
+    let (platform_size, platform_transform) = platform_query.single_mut();
+
+    let collision = collide(player_transform.translation, player_size.size,
+                platform_transform.translation, platform_size.size);
+
+    if collision.is_some() {
+        println!("COLLISION");
+    }
+
 }

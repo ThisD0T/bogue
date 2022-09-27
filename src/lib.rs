@@ -3,6 +3,16 @@ use bevy::prelude::*;
 pub const MAX_SPEED: f32 = 3.0;
 pub const PLAYER_SPEED: f32 = 0.5;
 
+#[derive(Component)]
+pub struct SizeVars{
+    pub size: Vec2,
+}
+
+#[derive(Component)]
+pub struct PlatformTimer{
+    timer: Timer,
+}
+
 #[derive(Component, Default)]
 pub struct PhysVars {
     pub velocity: Vec3,
@@ -27,3 +37,4 @@ pub fn apply_physics (
         physics_vars.acceleration = Vec3::splat(0.0);
     }
 }
+

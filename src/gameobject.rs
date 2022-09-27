@@ -1,7 +1,13 @@
 use bevy::prelude::*;
+use bevy::{
+    sprite::collide_aabb::collide,
+
+};
 
 use crate::lib::{
-    PhysVars
+    PhysVars,
+    SizeVars,
+    PlatformTimer,
 };
 
 const PLAYER_SIZE: f32 = 25.0;
@@ -20,7 +26,7 @@ impl Plugin for GameObjectPlugin {
 
 fn make_player(
     mut commands: Commands,
-    assets: Res<AssetServer>
+    assets: Res<AssetServer>,
 ) {
 
     let player = commands.spawn().id();
@@ -31,13 +37,13 @@ fn make_player(
             },
             texture: assets.load("player.png"),
             transform: Transform{
-                translation: Vec3::new(0.0, 0.0, 100.0),
+                translation: Vec3::new(150.0, 0.0, 100.0),
                 ..default()
             },
             ..default()
         })
+        .insert(SizeVars{size: Vec2::new(20.0, 20.0)})
         .insert(PhysVars::default())
         .insert(PlayerFlag)
         .insert(Name::new("Player"));
 }
-
