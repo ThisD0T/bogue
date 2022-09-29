@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use bevy::prelude::*;
 use bevy::{
     sprite::collide_aabb::collide,
@@ -7,14 +9,13 @@ use bevy::{
 use crate::lib::{
     PhysVars,
     SizeVars,
-    PlatformTimer,
+    KillboxTimer,
+    PlayerFlag,
+    SpeedTimer,
+    KillboxSpeed,
 };
 
 const PLAYER_SIZE: f32 = 25.0;
-
-#[derive(Component)]
-pub struct PlayerFlag;
-
 
 pub struct GameObjectPlugin;
 
@@ -43,6 +44,9 @@ fn make_player(
             ..default()
         })
         .insert(SizeVars{size: Vec2::new(20.0, 20.0)})
+        .insert(KillboxTimer{timer: Timer::new(Duration::from_secs_f32(1.0), false)})
+        .insert(SpeedTimer{timer: Timer::new(Duration::from_secs_f32(5.0), false)})
+        .insert(KillboxSpeed{speed: 1.0})
         .insert(PhysVars::default())
         .insert(PlayerFlag)
         .insert(Name::new("Player"));

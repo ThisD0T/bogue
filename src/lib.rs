@@ -1,5 +1,11 @@
 use bevy::prelude::*;
 
+#[derive(Component)]
+pub struct KillboxFlag;
+
+#[derive(Component)]
+pub struct PlayerFlag;
+
 pub const MAX_SPEED: f32 = 3.0;
 pub const PLAYER_SPEED: f32 = 0.5;
 
@@ -9,8 +15,18 @@ pub struct SizeVars{
 }
 
 #[derive(Component)]
-pub struct PlatformTimer{
-    timer: Timer,
+pub struct KillboxTimer{
+    pub timer: Timer,
+}
+
+#[derive(Component)]
+pub struct SpeedTimer {
+    pub timer: Timer,
+}
+
+#[derive(Component)]
+pub struct KillboxSpeed{
+    pub speed: f32,
 }
 
 #[derive(Component, Default)]

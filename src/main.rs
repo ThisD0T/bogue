@@ -14,6 +14,7 @@ mod lib;
 use lib::{
     apply_physics,
     SizeVars,
+    PlayerFlag,
 };
 
 mod input;
@@ -23,13 +24,10 @@ use input::{
 
 mod gameobject;
 use gameobject::GameObjectPlugin;
-use gameobject::{
-    PlayerFlag,
-};
 
-mod platform;
-use platform::{
-    PlatformPlugin
+mod killbox;
+use killbox::{
+    KillboxPlugin,
 };
 
 mod debug;
@@ -53,7 +51,7 @@ fn main() {
     .add_plugins(DefaultPlugins)
     .add_plugin(DebugPlugin)
     .add_plugin(GameObjectPlugin)
-    .add_plugin(PlatformPlugin)
+    .add_plugin(KillboxPlugin)
     .add_plugin(InputPlugin)
     .add_startup_system(camera_setup)
     .add_system(apply_physics)
@@ -63,7 +61,6 @@ fn main() {
 
 fn camera_setup(
     mut commands: Commands,
-    assets: Res<AssetServer>,
 ) {
 
     let camera = commands.spawn().id();
@@ -72,18 +69,20 @@ fn camera_setup(
 }
 
 pub fn test_collision(
-    mut commands: Commands,
     mut player_query: Query<(&mut SizeVars, &Transform), With<PlayerFlag>>,
-    mut platform_query: Query<(&mut SizeVars, &Transform), Without<PlayerFlag>>,
+    mut killbox_query: Query<(&mut SizeVars, &Transform), Without<PlayerFlag>>,
 ) {
     let (player_size, player_transform) = player_query.single_mut();
-    let (platform_size, platform_transform) = platform_query.single_mut();
+    for (killbox_size, killbox_transform) in killbox_query.iter_mut() {
 
-    let collision = collide(player_transform.translation, player_size.size,
-                platform_transform.translation, platform_size.size);
+        let collision = collide(player_transform.translation, player_size.size,
+                    killbox_transform.translation, killbox_size.size);
 
-    if collision.is_some() {
-        println!("COLLISION");
+        if collision.is_some() {
+        }
     }
+
+
+
 
 }

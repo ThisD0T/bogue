@@ -9,11 +9,9 @@ use bevy::{
 use crate::lib::{
     PhysVars,
     PLAYER_SPEED,
-};
-
-use crate::gameobject::{
     PlayerFlag,
 };
+
 
 pub struct InputPlugin;
 
@@ -33,6 +31,7 @@ struct MoveDirection {
 fn player_input(
     mut player_query: Query<(&mut Transform, &mut PhysVars), With<PlayerFlag>>,
     keys: Res<Input<KeyCode>>,
+    time: Res<Time>,
 ) {
     let (mut transform, mut phys_vars) = player_query.single_mut();
 
@@ -44,15 +43,17 @@ fn player_input(
     };
 
     if keys.pressed(KeyCode::A) {
-        phys_vars.acceleration += move_direction.left;
+        phys_vars.acceleration += move_direction.left - time.delta_seconds();
     } if keys.pressed(KeyCode::D) {
-        phys_vars.acceleration += move_direction.right;
+        phys_vars.acceleration += move_direction.right - time.delta_seconds();
     }
 
     if keys.pressed(KeyCode::W) {
-        phys_vars.acceleration += move_direction.up;
+        phys_vars.acceleration += move_direction.up - time.delta_seconds()
     } if keys.pressed(KeyCode::S) {
-        phys_vars.acceleration += move_direction.down;
+        phys_vars.acceleration += move_direction.down - time.delta_seconds();
     }
+
+    phys_vars.acceleration.z = 0.0;
 
 }
