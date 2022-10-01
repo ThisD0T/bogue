@@ -1,4 +1,7 @@
-use bevy::prelude::*;
+use bevy::{
+    prelude::*,
+    sprite::collide_aabb::collide,
+};
 
 use rand::{
     thread_rng,
@@ -17,6 +20,9 @@ use crate::lib::{
     PlayerFlag,
     SpeedTimer,
     KillboxSpeed,
+    Health,
+    GameState::{Playing, GameEnd},
+    GameState,
 };
 
 pub struct KillboxPlugin;
@@ -24,9 +30,15 @@ pub struct KillboxPlugin;
 impl Plugin for KillboxPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(test_setup);
-        app.add_system(move_killboxes)
-            .add_system(killbox_generator)
-            .add_system(despawn_killboxes);
+        app
+            .add_system_set(SystemSet::on_update(GameState::Playing)
+                .with_system(killbox_generator)
+                .with_system(move_killboxes)
+            )
+            .add_system_set(SystemSet::on_update(GameState::GameEnd)
+            )
+            .add_system(despawn_killboxes)
+            .add_system(killbox_collision);
     }
 }
 
@@ -169,4 +181,32 @@ fn despawn_killboxes(
             commands.entity(entity).despawn();
         }
     }
+}
+
+pub fn killbox_collision(
+    mut commands: Commands,
+    mut player_query: Query<(&mut SizeVars, &Transform, &mut Health), With<PlayerFlag>>,
+    mut killbox_query: Query<(Entity, &mut SizeVars, &Transform), Without<PlayerFlag>>,
+    mut state: ResMut<State<GameState>>,
+) {
+    let (player_size, player_transform, mut player_health) = player_query.single_mut();
+
+    for (killbox, killbox_size, killbox_transform) in killbox_query.iter_mut() {
+
+        let collision = collide(player_transform.translation, player_size.size,
+                    killbox_transform.translation, killbox_size.size);
+
+        if collision.is_some() {
+            commands.entity(killbox).despawn();
+            player_health.health -= 1;
+            if player_health.health < 1 {
+                state.set(GameState::GameEnd).expect("failed to change game state");
+            }
+            println!("{}", player_health.health);
+        }
+    }
+
+
+
+
 }

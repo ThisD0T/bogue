@@ -10,6 +10,8 @@ use crate::lib::{
     PhysVars,
     PLAYER_SPEED,
     PlayerFlag,
+    GameState::{Playing, GameEnd},
+    GameState
 };
 
 
@@ -17,7 +19,10 @@ pub struct InputPlugin;
 
 impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(player_input);
+        app
+            .add_system_set(SystemSet::on_update(GameState::Playing)
+                .with_system(player_input)
+            );
     }
 }
 

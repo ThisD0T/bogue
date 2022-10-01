@@ -13,6 +13,9 @@ use crate::lib::{
     PlayerFlag,
     SpeedTimer,
     KillboxSpeed,
+    Health,
+    GameState::{Playing, GameEnd},
+    GameState,
 };
 
 const PLAYER_SIZE: f32 = 25.0;
@@ -21,7 +24,8 @@ pub struct GameObjectPlugin;
 
 impl Plugin for GameObjectPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(make_player);
+        app.add_startup_system(make_player)
+            .add_system(player_health);
     }
 }
 
@@ -47,7 +51,15 @@ fn make_player(
         .insert(KillboxTimer{timer: Timer::new(Duration::from_secs_f32(1.0), false)})
         .insert(SpeedTimer{timer: Timer::new(Duration::from_secs_f32(5.0), false)})
         .insert(KillboxSpeed{speed: 1.0})
+        .insert(Health{health: 3})
         .insert(PhysVars::default())
         .insert(PlayerFlag)
         .insert(Name::new("Player"));
+}
+
+fn player_health(
+    mut query: Query<&mut Health, With<PlayerFlag>>,
+    mut state: ResMut<State<GameState>>,
+) {
+    let health = query.single_mut();
 }

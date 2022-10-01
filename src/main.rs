@@ -15,12 +15,16 @@ use lib::{
     apply_physics,
     SizeVars,
     PlayerFlag,
+    GameState::{Playing, GameEnd},
+    GameState,
 };
 
 mod input;
 use input::{
     InputPlugin,
 };
+
+
 
 mod gameobject;
 use gameobject::GameObjectPlugin;
@@ -29,6 +33,9 @@ mod killbox;
 use killbox::{
     KillboxPlugin,
 };
+
+mod ui;
+use ui::UiPlugin;
 
 mod debug;
 use debug::DebugPlugin;
@@ -40,6 +47,7 @@ const WWIDTH: f32 = 576.0;
 
 fn main() {
     App::new()
+    .add_state(GameState::Playing)
     .insert_resource(ClearColor(Color::rgb_u8(0, 0, 0)))
     .insert_resource(WindowDescriptor {
         title: "Rasteroids".to_string(),
@@ -48,14 +56,16 @@ fn main() {
         resizable: false,
         ..Default::default()
     })
+    .add_system_set(SystemSet::on_update(GameState::Playing)
+        .with_system(apply_physics)
+    )
     .add_plugins(DefaultPlugins)
     .add_plugin(DebugPlugin)
     .add_plugin(GameObjectPlugin)
     .add_plugin(KillboxPlugin)
     .add_plugin(InputPlugin)
+    .add_plugin(UiPlugin)
     .add_startup_system(camera_setup)
-    .add_system(apply_physics)
-    .add_system(test_collision)
     .run();
 }
 
@@ -66,23 +76,4 @@ fn camera_setup(
     let camera = commands.spawn().id();
     commands.entity(camera)
         .insert_bundle(Camera2dBundle::default());
-}
-
-pub fn test_collision(
-    mut player_query: Query<(&mut SizeVars, &Transform), With<PlayerFlag>>,
-    mut killbox_query: Query<(&mut SizeVars, &Transform), Without<PlayerFlag>>,
-) {
-    let (player_size, player_transform) = player_query.single_mut();
-    for (killbox_size, killbox_transform) in killbox_query.iter_mut() {
-
-        let collision = collide(player_transform.translation, player_size.size,
-                    killbox_transform.translation, killbox_size.size);
-
-        if collision.is_some() {
-        }
-    }
-
-
-
-
 }

@@ -1,10 +1,19 @@
 use bevy::prelude::*;
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
+pub enum GameState {
+    Playing,
+    GameEnd,
+}
+
 #[derive(Component)]
 pub struct KillboxFlag;
 
 #[derive(Component)]
 pub struct PlayerFlag;
+
+#[derive(Component)]
+pub struct GameEndTextFlag;
 
 pub const MAX_SPEED: f32 = 3.0;
 pub const PLAYER_SPEED: f32 = 0.5;
@@ -35,6 +44,11 @@ pub struct PhysVars {
     pub acceleration: Vec3,
 }
 
+#[derive(Component, Default)]
+pub struct Health {
+    pub health: i32,
+}
+
 pub fn apply_physics (
     mut commands: Commands,
     mut query: Query<(&mut Transform, &mut PhysVars), With<PhysVars>>,
@@ -54,3 +68,40 @@ pub fn apply_physics (
     }
 }
 
+pub fn make_text(
+    mut commands: Commands,
+    assets: Res<AssetServer>,
+    string: &str,
+    font_size: f32,
+    color: Color,
+    ui_rect: UiRect<Val>,
+) -> Entity {
+    let text = commands.spawn().id();
+    commands.entity(text)
+        .insert_bundle(
+            TextBundle::from_sections([
+                TextSection::new(
+                    
+                    string,
+                    TextStyle {
+                        font: assets.load("LemonMilk.ttf"),
+                        font_size: font_size,
+                        color: color,
+                    },
+                ),
+                TextSection::from_style(TextStyle {
+                    font: assets.load("LemonMilk.ttf"),
+                    font_size: font_size,
+                    color: color,
+                }),
+            ])
+            .with_style(Style{
+                align_self: AlignSelf::FlexEnd,
+                position_type: PositionType::Absolute,
+                position: ui_rect,
+                ..default()
+            }),
+        );
+    
+        return text;
+}
