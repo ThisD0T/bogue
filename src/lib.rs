@@ -15,6 +15,9 @@ pub struct PlayerFlag;
 #[derive(Component)]
 pub struct GameEndTextFlag;
 
+#[derive(Component)]
+pub struct HealthTextFlag;
+
 pub const MAX_SPEED: f32 = 3.0;
 pub const PLAYER_SPEED: f32 = 0.5;
 
@@ -48,6 +51,7 @@ pub struct PhysVars {
 pub struct Health {
     pub health: i32,
 }
+
 
 pub fn apply_physics (
     mut commands: Commands,

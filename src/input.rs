@@ -59,6 +59,7 @@ fn player_input(
         phys_vars.acceleration += move_direction.down - time.delta_seconds();
     }
 
+    
     phys_vars.acceleration.z = 0.0;
 
 }
