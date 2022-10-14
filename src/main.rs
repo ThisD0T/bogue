@@ -40,8 +40,8 @@ use ui::UiPlugin;
 mod debug;
 use debug::DebugPlugin;
 
-const WHEIGHT: f32 = 600.0;
-const WWIDTH: f32 = 576.0;
+const WHEIGHT: f32 = 900.0;
+const WWIDTH: f32 = 776.0;
 
 //const BG_COLOUR: Color = Color::rgb_u8(219, 130, 96);
 

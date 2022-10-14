@@ -102,7 +102,6 @@ fn game_end(
 
     if health.health < 1 {
         text.is_visible = true;
-        println!("changed text visibility");
     } else {
         text.is_visible = false;
     }

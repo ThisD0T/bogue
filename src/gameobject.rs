@@ -50,7 +50,7 @@ fn make_player(
         .insert(SizeVars{size: Vec2::new(20.0, 20.0)})
         .insert(KillboxTimer{timer: Timer::new(Duration::from_secs_f32(1.0), false)})
         .insert(SpeedTimer{timer: Timer::new(Duration::from_secs_f32(5.0), false)})
-        .insert(KillboxSpeed{speed: 1.0})
+        .insert(KillboxSpeed{speed: 2.0})
         .insert(Health{health: 3})
         .insert(PhysVars::default())
         .insert(PlayerFlag)

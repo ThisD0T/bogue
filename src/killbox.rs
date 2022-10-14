@@ -88,7 +88,6 @@ fn move_killboxes(
 
     if timer.timer.just_finished() {
         speed.speed += 0.2;
-        println!("{}", speed.speed);
         timer.timer.reset();
     }
     
@@ -116,10 +115,10 @@ fn killbox_generator(
         killboxes += 1;
     }
 
-    if killboxes < 12 {
+    if killboxes < 29 {
 
         let rand_size: Vec2 = Vec2::new(rng.gen_range(20.0..80.0), rng.gen_range(20.0..80.0));
-        let position = Vec3::new(rng.gen_range(-WWIDTH..WWIDTH)/2.0, rng.gen_range((WHEIGHT/2.5)..WHEIGHT), 0.0);
+        let position = Vec3::new(rng.gen_range(-WWIDTH..WWIDTH)/2.0, rng.gen_range((WHEIGHT/2.0)..(WHEIGHT*2.0)), 0.0);
 
         let mut computed = false;
 
